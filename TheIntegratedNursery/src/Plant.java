@@ -1,5 +1,9 @@
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.util.function.Predicate;
 import java.util.regex.*;
 
 public class Plant {
@@ -14,6 +18,24 @@ public class Plant {
         PTERIDOPHYTES,
         BRYOPHTES
     }
+
+
+    private static final PlantComparator plantComparator = new PlantComparator();
+    
+
+    
+    public static Predicate<Plant> mostExperienced() 
+    {
+        return plant -> plant.equals(Collections.max(plantList, plantComparator));
+    }
+
+    
+    public static Predicate<Plant> leastExperienced() {
+        return plant -> plant.equals(Collections.min(plantList, plantComparator));
+    }
+
+
+
 
     public static HashMap<Integer, Zone> zones = new HashMap<Integer, Zone>();
 
@@ -68,7 +90,7 @@ public class Plant {
             return true;
         return false;
     }
-// Needs fix
+
 // doesnt work if capital letters are sequential. rare case.
     public static boolean validateGenusSpecies(String genusSpecies)
      {
@@ -119,5 +141,6 @@ public class Plant {
         }
         return false;
     }
+    
 
 }
