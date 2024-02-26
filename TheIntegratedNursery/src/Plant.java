@@ -2,28 +2,20 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.regex.*;
 
-public class Plant 
-{
+public class Plant {
     long id;
     String genusSpecies;
     String commonName;
     LocalDate dateIntroduced;
 
-    enum plantGroup
-    {
+    enum plantGroup {
         ANGIOSPERMS,
         GYMNOSPERMS,
         PTERIDOPHYTES,
         BRYOPHTES
     }
 
-
-    //TODO needs changing, needs to move to Zone Class... unsure how to implement
-    
-
-    public static HashMap<Integer,Zone> zones = new HashMap<Integer,Zone>();
-
-
+    public static HashMap<Integer, Zone> zones = new HashMap<Integer, Zone>();
 
     public long getId() {
         return this.id;
@@ -34,7 +26,9 @@ public class Plant
     }
 
     public void setGenusSpecies(String genusSpecies) {
+        if (validateGenusSpecies(genusSpecies) == true)
         this.genusSpecies = genusSpecies;
+
     }
 
     public String getCommonName() {
@@ -42,7 +36,9 @@ public class Plant
     }
 
     public void setCommonName(String commonName) {
+        if(vaildateCommonName(commonName) == true)
         this.commonName = commonName;
+
     }
 
     public LocalDate getDateIntroduced() {
@@ -53,43 +49,75 @@ public class Plant
         this.dateIntroduced = dateIntroduced;
     }
 
-    public HashMap<Integer,Zone> getZones() {
-        return this.zones;
+    public HashMap<Integer, Zone> getZones() {
+        return zones;
     }
 
-    public void setZones(HashMap<Integer,Zone> zones) {
+    public void setZones(HashMap<Integer, Zone> zones) {
         this.zones = zones;
-    }
+      }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format("%s (%s)", commonName, genusSpecies);
 
     }
 
-    public boolean growsInZone(int zoneNumber)
-    {
+    public boolean growsInZone(int zoneNumber) {
         if (zones.containsKey(zoneNumber))
             return true;
         return false;
     }
+// Needs fix
+// doesnt work if capital letters are sequential. rare case.
+    public static boolean validateGenusSpecies(String genusSpecies)
+     {
+        if ((genusSpecies.length() >= 7 && genusSpecies.length() <= 39)) 
+        {
 
-    public static boolean validateName(String name)
-    {
+            String regex = "[A-Z]+";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(genusSpecies);
 
-        if (!(name.length() >= 7 && name.length() <= 39)) return false;
 
-        String regex = "[A-Z]+";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(name);
+            
+            while (matcher.find()) 
+            {
+                if (!((matcher.start()) == 0 && matcher.end() >= 1)) 
+                {
+                    System.err.println("Invalid. In scientific name, only the first letter must be capitalized.");
+                    return false;
+                }
 
-        while (matcher.find()) {
-            if (!((matcher.start()) == 0 && matcher.end() == 1)) return false;
-  
+            }
+        } 
+        else 
+        {
+            System.err.println("Invalid length. Scientific name must be between 7 and 39 characters inclusive.");
+
+            return false;
         }
         return true;
-        
+
+    }
+
+    public static boolean vaildateCommonName(String commonName)
+    {
+        String regex = "[A-Z]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(commonName);
+
+        while (matcher.find()) {
+            if (((matcher.start()) != 0)) {
+                System.err.println("Invalid name. Common name must start with a capital letter.");
+                return false;
+            } else {
+                return true;
+            }
+            
+
+        }
+        return false;
     }
 
 }
