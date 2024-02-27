@@ -24,6 +24,8 @@ public class Plant {
     private static Plant mostExperiencedPlant;
     private static Plant leastExperiencedPlant;
 
+    public static int plantsCreated = 0;
+
     public static HashMap<String, Predicate<Plant>> evaluators;
     static {
         evaluators = new HashMap<>();
@@ -31,8 +33,11 @@ public class Plant {
         evaluators.put("least_experienced", plant -> plant == leastExperiencedPlant);
     }
 
-    public Plant(long id, String genusSpecies, String commonName, LocalDate dateIntroduced) {
-        this.id = id;
+    public Plant(String genusSpecies, String commonName, LocalDate dateIntroduced) {
+       
+
+        plantsCreated++;
+        this.id = plantsCreated;
         this.genusSpecies = genusSpecies;
         this.commonName = commonName;
         this.dateIntroduced = dateIntroduced;
@@ -138,6 +143,8 @@ public class Plant {
 
     }
 
+
+    //issue: matcher.start() does not return null or 0 if not found.
     public static boolean vaildateCommonName(String commonName)
     {
         String regex = "[A-Z]+";
