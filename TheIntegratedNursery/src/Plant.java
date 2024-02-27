@@ -31,7 +31,9 @@ public class Plant {
         evaluators.put("least_experienced", plant -> plant == leastExperiencedPlant);
     }
 
-    public Plant(String commonName, LocalDate dateIntroduced) {
+    public Plant(long id, String genusSpecies, String commonName, LocalDate dateIntroduced) {
+        this.id = id;
+        this.genusSpecies = genusSpecies;
         this.commonName = commonName;
         this.dateIntroduced = dateIntroduced;
 
