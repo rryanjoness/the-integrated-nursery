@@ -7,19 +7,48 @@ import java.util.function.Predicate;
 import java.util.regex.*;
 
 public class Plant {
+
+//FIELDS
     long id;
     String genusSpecies;
     String commonName;
     LocalDate dateIntroduced;
-
+    
     enum plantGroup {
         ANGIOSPERMS,
         GYMNOSPERMS,
         PTERIDOPHYTES,
         BRYOPHTES
     }
+    
+    ArrayList<Zone> zones;
+    
+    private static Plant mostExperiencedPlant;
+    private static Plant leastExperiencedPlant;
 
+    public static HashMap<String, Predicate<Plant>> evaluators;
+    static {
+        evaluators = new HashMap<>();
+        //TODO: check that i didn't mess up the compareTo() method usage here
+        evaluators.put("most_experienced", plant -> plant.getDateIntroduced().compareTo(mostExperiencedPlant.getDateIntroduced()) == 0);
+        evaluators.put("least_experienced",plant -> plant.getDateIntroduced().compareTo(leastExperiencedPlant.getDateIntroduced()) == 0);
+    }
 
+    //Constructor
+     public Plant(String commonName, String genusSpecies, LocalDate dateIntroduced) {
+        this.genusSpecies = genusSpecies;
+        this.commonName = commonName;
+        this.dateIntroduced = dateIntroduced;
+
+        experienceCheck();
+    }
+
+    //Temporary empty Plant() constructor to silence errors in Trees and Flowering classes
+    public Plant(){
+    }
+    
+//Old Plant comparator method (commented out for backup purposes.)   
+/**
     private static final PlantComparator plantComparator = new PlantComparator();
     
 
@@ -34,11 +63,10 @@ public class Plant {
         return plant -> plant.equals(Collections.min(plantList, plantComparator));
     }
 
+*/
 
 
-
-    public static HashMap<Integer, Zone> zones = new HashMap<Integer, Zone>();
-
+   
     public long getId() {
         return this.id;
     }
@@ -69,6 +97,7 @@ public class Plant {
 
     public void setDateIntroduced(LocalDate dateIntroduced) {
         this.dateIntroduced = dateIntroduced;
+        experienceCheck();
     }
 
     public HashMap<Integer, Zone> getZones() {
@@ -91,6 +120,22 @@ public class Plant {
         return false;
     }
 
+
+//Methods
+
+    /*
+    * Checks and sets if current Plant is most or least experienced Plant
+    */
+    public void experienceCheck(){            
+        // Update most and least experienced plants based on the earliest dateIntroduced
+            if (mostExperiencedPlant == null || dateIntroduced.compareTo(mostExperiencedPlant.dateIntroduced) < 0) {
+                mostExperiencedPlant = this;
+            }
+            if (leastExperiencedPlant == null || dateIntroduced.compareTo(leastExperiencedPlant.dateIntroduced) > 0) {
+                leastExperiencedPlant = this;
+            }
+    }
+    
 // doesnt work if capital letters are sequential. rare case.
     public static boolean validateGenusSpecies(String genusSpecies)
      {
