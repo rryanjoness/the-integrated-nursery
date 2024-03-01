@@ -10,9 +10,11 @@ public class Plant {
 
 //FIELDS
     long id;
+    static long plantsCreated = 0;
     String genusSpecies;
     String commonName;
     LocalDate dateIntroduced;
+    plantGroup plantGroup;
     
     enum plantGroup {
         ANGIOSPERMS,
@@ -36,9 +38,14 @@ public class Plant {
 
     //Constructor
      public Plant(String commonName, String genusSpecies, LocalDate dateIntroduced) {
+        plantsCreated++;
+        this.id = plantsCreated;
         this.genusSpecies = genusSpecies;
         this.commonName = commonName;
         this.dateIntroduced = dateIntroduced;
+        this.plantGroup = plantGroup.ANGIOSPERMS; // TODO: Figure out what to do with these plantGroup enums lol
+        
+        
 
         experienceCheck();
     }
@@ -121,7 +128,7 @@ public class Plant {
     }
 
 
-//Methods
+//Methods 
 
     /*
     * Checks and sets if current Plant is most or least experienced Plant
@@ -136,27 +143,41 @@ public class Plant {
             }
     }
     
-// doesnt work if capital letters are sequential. rare case.
+
+
+// Matcher Declaration
+static final String capsString = "[A-Z]+";
+static final Pattern capsPattern = Pattern.compile(capsString);
+
+/*
+* validateGenusSpecies - validates the length and character requirement of a scientific name (7-9 chars, 1st char caps ONLY)
+  Probably very inefficient, but works!
+* @param: String genusSpecies to be validated
+* @return: true if name is valid
+*/
     public static boolean validateGenusSpecies(String genusSpecies)
      {
         if ((genusSpecies.length() >= 7 && genusSpecies.length() <= 39)) 
         {
 
-            String regex = "[A-Z]+";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(genusSpecies);
-
-
+            Matcher caps = capsPattern.matcher(genusSpecies);
             
-            while (matcher.find()) 
+            if (!(caps.find())) 
             {
-                if (!((matcher.start()) == 0 && matcher.end() >= 1)) 
+                System.err.println("Invalid. In scientific name, the first letter must be capitalized.");
+                return false; 
+            }
+
+            while (caps.find())
+            {
+                if ((caps.end() != 1))
                 {
                     System.err.println("Invalid. In scientific name, only the first letter must be capitalized.");
                     return false;
                 }
 
             }
+
         } 
         else 
         {
@@ -164,27 +185,28 @@ public class Plant {
 
             return false;
         }
-        return true;
 
+        return true;
     }
 
+    /*
+    * validateCommonName - checks if name starts with uppercase letter
+    * @param: String commonName to be validated
+    * @return: true if name is valid
+    */
     public static boolean vaildateCommonName(String commonName)
     {
-        String regex = "[A-Z]+";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(commonName);
+        
+        char first = commonName.charAt(0);
 
-        while (matcher.find()) {
-            if (((matcher.start()) != 0)) {
-                System.err.println("Invalid name. Common name must start with a capital letter.");
-                return false;
-            } else {
-                return true;
-            }
-            
-
+        if (Character.isUpperCase(first)) return true;
+        
+        else
+        {
+            System.out.println("Invalid. Common name must start with an uppercase letter.");
+            return false;
         }
-        return false;
+        
     }
     
 
